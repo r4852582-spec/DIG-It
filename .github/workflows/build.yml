@@ -1,0 +1,60 @@
+name: Build DIG It APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract game
+        run: |
+          mkdir game
+          unzip -o "DIG It.zip" -d game
+          find game -maxdepth 3 -type f | head -50
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-venv \
+            build-essential git zip unzip openjdk-17-jdk \
+            libffi-dev libssl-dev
+
+      - name: Install Buildozer
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install buildozer cython
+
+      - name: Find game
+        run: |
+          find game -name "game.py" -print
+
+      - name: Prepare project
+        run: |
+          GAME_DIR=$(dirname "$(find game -name 'game.py' | head -1)")
+          cp -r "$GAME_DIR"/* .
+          printf '%s\n' \
+            '[app]' \
+            'title = DIG It' \
+            'package.name = digit' \
+            'package.domain = org.digit' \
+            'source.dir = .' \
+            'source.include_exts = py,png,jpg,jpeg,wav,ogg,mp3,ttf,json' \
+            'requirements = python3,pygame' \
+            'orientation = landscape' \
+            'fullscreen = 1' \
+            > buildozer.spec
+
+      - name: Build APK
+        run: |
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DIG-It-APK
+          path: bin/*.apk
