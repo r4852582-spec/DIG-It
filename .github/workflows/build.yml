@@ -50,12 +50,11 @@ jobs:
             'fullscreen = 1' \
             > buildozer.spec
 
+            - name: Accept Android licenses
+        run: |
+          mkdir -p ~/.buildozer/android/platform
+          yes | buildozer android update
+
       - name: Build APK
         run: |
-          buildozer android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: DIG-It-APK
-          path: bin/*.apk
+          yes | buildozer android debug
