@@ -40,6 +40,7 @@ jobs:
           printf '%s\n' \
             '[app]' \
             'title = DIG It' \
+            'version = 1.0' \
             'package.name = digit' \
             'package.domain = org.digit' \
             'source.dir = .' \
