@@ -51,7 +51,7 @@ jobs:
             > buildozer.spec
 
             - name: Accept Android licenses
-        run: |
+         run: |
           mkdir -p ~/.buildozer/android/platform
           yes | buildozer android update
 
